@@ -7,6 +7,7 @@ package com.nextgenpos;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -24,13 +25,15 @@ public class Sale extends Register{
     private final int cancelTransaction;
     private static final Double taxPercent = .19;
     private ArrayList<int[]> changes; //list of changes made in the program, used to undo changes
+    Cart currentCart = new Cart();
     
      public Sale() {
         this.nextItem = true;
         this.endOfCart = -999;
         this.removeItem = -1;
         this.cancelTransaction = -190;
-        //this.input = 0;  /*stores itemNum of currentCart.items.get(index).getItemNumber*/
+        this.input = 0;  /*stores itemNum of currentCart.items.get(index).getItemNumber*/
+        
     }
      
      public void makeTransaction() throws InterruptedException, IOException {
@@ -184,5 +187,23 @@ public class Sale extends Register{
                 }
         }
         }
+    }
+      public void cancelTransaction(ArrayList<int[]> changes) throws InterruptedException, IOException {
+
+            /*this should set all elements of ArrayList items to null and set size to 0*/
+            System.out.println("Transaction was cancelled...CART IS NOW EMPTY!");
+            currentCart.inventory.clear();
+            currentCart.clearSubTotal();
+
+            int id;
+            int quantity;
+
+            for (int[] pair : changes) {
+
+                id = pair[0];
+                quantity = pair[1];
+
+                //SQLInterface.getInstance().updateQuantity(id, quantity);
+            }
     }
 }

@@ -61,11 +61,9 @@ public class Cart {
         return subTotal;
     }
 
-    public void clearSubTotal(double subTotal) {
+    public void clearSubTotal() {
         this.subTotal = 0;
     }
-    
-    
     
     // data necesara in cazul unui retur 
     public void setCurrentDay(){
