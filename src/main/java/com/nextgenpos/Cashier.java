@@ -54,8 +54,9 @@ public class Cashier {
                         trans.makeTransaction();
                         break;
                     case 1:
-                        Return ret = new Return();
-                        ret.makeReturn();
+                        //Return ret = new Return();  // de creat clasa Return 
+                        //ret.makeReturn();
+                        System.out.println("Not supported yet!");
                         break;
                     case -1:
                         //logout

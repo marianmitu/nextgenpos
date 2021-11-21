@@ -59,48 +59,13 @@ public class Sale extends Register{
                         cancelTransaction(changes);
                         Cashier.cashierDo();
                         break;
-                    } else if (input >= SQLInterface.getInstance().getMaxID() || input <= 0){
-                        System.out.println("Error, Item not found");
-                    } else { //input is none of the options, thus possibly a valid itemNumber to add an item to cart
+                    }
+                     else { //input is none of the options, thus possibly a valid itemNumber to add an item to cart
                         //based on input, return Item from database called item
                         System.out.print("Enter quantity of item to be purchased\n-->"); //prompt user to enter quantity of items to buy
                         if (!transaction.hasNextInt()){throw new InputMismatchException();}
                         int itemQuan = transaction.nextInt();
                         if (itemQuan < 1){throw new InputMismatchException();}
-                        //if the item entered is a rental prompt them to start rental process
-                        if (SQLInterface.getInstance().isRentable(input)) {
-                            Scanner rentScan = new Scanner(System.in);
-                            System.out.print("Enter number of days for your rental\n-->");
-                            int numRentDays = 0;
-                            if (rentScan.hasNextInt()) {
-                                numRentDays = rentScan.nextInt();
-                                currentCart.setDays(numRentDays);
-                                currentCart.getReturnDate();
-                            } else {
-                                System.out.println("Please try again");
-                                continue; //this should go back to prompting them for an item id
-                            }
-                        }
-                        if (itemQuan > SQLInterface.getInstance().getQuantity(input)) { //check inventory
-                            System.out.println("Error, not enough inventory for purchase");
-                            System.out.println("Please re-enter item id and quantity");
-                            continue;
-                        }
-                        if (itemQuan > 1 && itemQuan <= SQLInterface.getInstance().getQuantity(input)) {
-                            Item item = SQLInterface.getInstance().getItem(input);
-
-                            currentCart.addMultItems(item, itemQuan);
-                            SQLInterface.getInstance().updateQuantity(input, (itemQuan * -1));
-                            int[] changeVals = {input, itemQuan};
-                            changes.add(changeVals);
-                        } else {
-                            Item item = SQLInterface.getInstance().getItem(input);
-
-                            currentCart.add(item);
-                            SQLInterface.getInstance().updateQuantity(input, -1);
-                            int[] changeVals = {input, itemQuan};
-                            changes.add(changeVals);
-                        }
                     }
                 } else {
                     System.out.println("INVALID INPUT...Try Again");
@@ -112,21 +77,20 @@ public class Sale extends Register{
                 System.out.println();
                 transaction.nextLine();
             }
-            System.out.printf("\nCurrent Cart Subtotal : %.2f", this.currentCart.getSubtotal());
+            System.out.printf("\nCurrent Cart Subtotal : %.2f", this.currentCart.getSubTotal());
             System.out.print("\n\n");
 
         }
-        tax = getTax(currentCart);
 
         int pt = getPaymentType();
 
         if (registerPay(pt)) {
             boolean paid = false;
             while(!paid){
-                if (pt == 0) { //payment type is cash, run through getting cash, print receipt etc.
+                if (pt == 0) { // pt=0 plata cash, pt=1 plata card
                     Scanner cashIn = new Scanner(System.in);
-                    System.out.printf("Cart Total: %.2f\n", (this.currentCart.getSubtotal()*1.06));
-                    System.out.print("Enter cash recieved or enter -999 to pay by card\n-->"); //should put this in a loop, make another method?
+                    System.out.printf("Cart Total: %.2f\n", (this.currentCart.getSubTotal()*1.06));
+                    System.out.print("Enter cash recieved or enter -999 to pay by card\n-->");
                     double c = 0.0;
                     if (cashIn.hasNextDouble()) {
                         c = cashIn.nextDouble();
@@ -139,7 +103,7 @@ public class Sale extends Register{
                             System.out.println("Please Enter a valid amount...\n");
                             continue;
                         }
-                        double change = makeChange(c, currentCart.getSubtotal() + tax);
+                        double change = makeChange(c, currentCart.getSubTotal() + tax); // update la subtotal de plata
                         Receipt receipt = new Receipt(currentCart, tax, pt);
                         receipt.store();
                         receipt.print();
@@ -152,38 +116,7 @@ public class Sale extends Register{
                 } 
                 else if (pt == 1) 
                 {
-                    boolean valid = false;
-                    do
-                    {
-                        valid = false;
-                        Scanner creditCardScan = new Scanner(System.in);
-                        System.out.print("Enter credit card number or enter -999 to pay with cash\n-->");
-                        if (creditCardScan.hasNextLong()) 
-                        {
-                            long ccN = creditCardScan.nextLong();
-                            if (ccN == -999){
-                                pt = 0;
-                                System.out.println("\nPaying By Cash...");
-                                break;
-                            }
-                            String ccNString = Long.toString(ccN);
-                            boolean validate = CreditCheck.getInstance().creditCardCheck(ccNString);
-                            if (validate) 
-                            { //valid cc
-                                System.out.println("Valid Credit Card Entered");
-                                valid = true;
-                                Receipt receipt = new Receipt(currentCart, tax, pt);
-                                receipt.store();
-                                receipt.print();
-                                paid = true;
-                            } 
-                            else 
-                            {
-                                System.out.println("Invalid Credit Card Entered, Try Again."); //not 100% sure where this will end up afterwards, need to check and adjust
-                            }
-                        }
-                        System.out.println("Invalid Credit Card Entered, Try Again.");
-                    }while(!valid);
+                    // plata cu cardul de implementat
                 }
         }
         }
@@ -205,5 +138,41 @@ public class Sale extends Register{
 
                 //SQLInterface.getInstance().updateQuantity(id, quantity);
             }
+    }
+      
+      public double makeChange(double cash, double total) {
+        double ret = 0.0;
+        Scanner cashIn = new Scanner(System.in);
+        if (cash >= total) {
+            ret = cash - total;
+           
+        } else if (cash < total) 
+        {
+            System.out.printf("Insufficient Funds!\nRemaining Amount Due: $%.2f\n", (total-cash));
+            double c = 0.0;
+            while (true){
+                System.out.print("Enter more money to complete the sale:\n-->");
+                if (cashIn.hasNextDouble()) 
+                {
+                    c = cashIn.nextDouble();
+                    if (c > 0.0){
+                        break;
+                    }
+                    else{
+                        System.out.println("Please enter a valid sum of money...\n");
+                    }
+                }
+                else{
+                    System.out.println("Please enter a valid sum of money...\n");
+                    cashIn.nextLine();
+                }
+            }
+
+
+            cash = cash + c;
+            ret = makeChange(cash, total);
+
+        }
+        return ret;
     }
 }

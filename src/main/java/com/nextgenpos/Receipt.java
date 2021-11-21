@@ -22,11 +22,11 @@ public class Receipt {
     //private Date date = new Date();
     private double rentalDeposit = 0.0;
 
-    public Receipt(Cart c, double t, int pm, int id) {
+    public Receipt(Cart c, double t, int pm) {
         this.cart = c;
         this.tax = t;
         this.paymentMethod = pm;
-        this.id = id;
+        //this.id = id;
     }
 
     public void print() throws InterruptedException, IOException {
@@ -42,9 +42,22 @@ public class Receipt {
         if (cart.getSubTotal() == 0) {
             totalTax = 0;
         }
+
         System.out.println("\tTotal Tax:\t$" + df.format(totalTax));
         System.out.println("\nOrder Total:\t$" + df.format(cart.getSubTotal() + totalTax));
         System.out.println("Receipt Number: " + this.id);  //this line is why you need to store() before you print()
+    }
+
+    public Cart getCart() {
+        return this.cart;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    public void store(){
+        //de implementat metoda de salvare a vanzarii in baza de date
     }
 
 }
