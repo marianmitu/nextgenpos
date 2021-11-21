@@ -35,19 +35,15 @@ public class Receipt {
         Date receiptDate = new Date(); //now
         System.out.println("Date: " + receiptDate);
         for (Item item : cart.inventory) { //for each item in cart
-            if (item.getIsRental()) {
-                System.out.print("(R)");
-            }
-            System.out.println(item.getName() + "\t\t$" + df.format(item.getPrice()));
+            System.out.println(item.getItemName() + "\t\t$" + df.format(item.getPrice()));
         }
-
-        System.out.println("\n\tOrder Subtotal:\t$" + df.format(cart.getSubtotal()));
+        System.out.println("\n\tOrder Subtotal:\t$" + df.format(cart.getSubTotal()));
         double totalTax = this.tax;
-        if (cart.getSubtotal() == 0) {
+        if (cart.getSubTotal() == 0) {
             totalTax = 0;
         }
         System.out.println("\tTotal Tax:\t$" + df.format(totalTax));
-        System.out.println("\nOrder Total:\t$" + df.format(cart.getSubtotal() + totalTax));
+        System.out.println("\nOrder Total:\t$" + df.format(cart.getSubTotal() + totalTax));
         System.out.println("Receipt Number: " + this.id);  //this line is why you need to store() before you print()
     }
 
