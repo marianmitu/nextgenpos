@@ -19,8 +19,6 @@ public class Receipt {
     private double tax;
     private int paymentMethod;
     private int id = -999;
-    //private Date date = new Date();
-    private double rentalDeposit = 0.0;
 
     public Receipt(Cart c, double t, int pm) {
         this.cart = c;
@@ -30,11 +28,10 @@ public class Receipt {
     }
 
     public void print() throws InterruptedException, IOException {
-        //IMPORTANT: receipt must be stored before it is printed, in order to get its id
         DecimalFormat df = new DecimalFormat("0.00");
         Date receiptDate = new Date(); //now
         System.out.println("Date: " + receiptDate);
-        for (Item item : cart.inventory) { //for each item in cart
+        for (Product item : cart.inventory) { //for each item in cart
             System.out.println(item.getItemName() + "\t\t$" + df.format(item.getPrice()));
         }
         System.out.println("\n\tOrder Subtotal:\t$" + df.format(cart.getSubTotal()));

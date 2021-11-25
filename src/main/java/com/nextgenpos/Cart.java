@@ -15,7 +15,7 @@ import java.util.Calendar;
  */
 public class Cart {
 
-    protected ArrayList<Item> inventory;
+    protected ArrayList<Product> inventory;
 
     private double subTotal;
     private double cashIn;
@@ -27,9 +27,15 @@ public class Cart {
         this.setCurrentDay();
     }
 
-    public void add(Item item) {
+    public void add(Product item) {
         inventory.add(item);
         this.subTotal += item.getPrice();
+    }
+    
+    public void addMultItems(Product item, int q) {
+        for (int i = 0; i < q; i++) {
+            this.add(item);
+        }
     }
 
     public Integer getStartDate() {
@@ -41,9 +47,9 @@ public class Cart {
     }
 
     public void removeItem(int itemNumber) throws InterruptedException, IOException {
-        
+
         for (int i = 0; i < inventory.size(); i++) {
-            if (itemNumber == inventory.get(i).getItemNumber()) {
+            if (itemNumber == inventory.get(i).getId()) {
 
                 System.out.println(inventory.get(i).getItemName() + " was removed from cart!");
                 subTotal -= inventory.get(i).getPrice();
@@ -64,10 +70,10 @@ public class Cart {
     public void clearSubTotal() {
         this.subTotal = 0;
     }
-    
+
     // data necesara in cazul unui retur 
-    public void setCurrentDay(){
-        this.currentDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);    
+    public void setCurrentDay() {
+        this.currentDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
     }
-    
+
 }

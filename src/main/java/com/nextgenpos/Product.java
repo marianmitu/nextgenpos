@@ -5,20 +5,21 @@
  */
 package com.nextgenpos;
 
+
 /**
  *
  * @author steau
  */
-public class Item {
+public class Product {
 
     private double price;
-    private int itemNumber;
+    private int id;
     private String itemName;
     private int quantity;
 
-    public Item(double p, int num, String name, int q) {
+    public Product(double p, int num, String name, int q) {
         this.price = p;
-        this.itemNumber = num;
+        this.id = num;
         this.itemName = name;
         this.quantity = q;
     }
@@ -31,12 +32,12 @@ public class Item {
         this.price = price;
     }
 
-    public int getItemNumber() {
-        return itemNumber;
+    public int getId() {
+        return id;
     }
 
-    public void setItemNumber(int itemNumber) {
-        this.itemNumber = itemNumber;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getItemName() {

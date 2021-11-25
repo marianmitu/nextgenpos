@@ -14,8 +14,8 @@ import java.util.Scanner;
  *
  * @author steau
  */
-public class Sale extends Register{
-    
+public class Sale extends Register {
+
     private double total;
     private double tax;
     private boolean nextItem;
@@ -26,53 +26,63 @@ public class Sale extends Register{
     private static final Double taxPercent = .19;
     private ArrayList<int[]> changes; //list of changes made in the program, used to undo changes
     Cart currentCart = new Cart();
-    
-     public Sale() {
+
+    public Sale() {
         this.nextItem = true;
         this.endOfCart = -999;
         this.removeItem = -1;
         this.cancelTransaction = -190;
-        this.input = 0;  /*stores itemNum of currentCart.items.get(index).getItemNumber*/
-        
+        this.input = 0;
+        /*stores itemNum of currentCart.items.get(index).getItemNumber*/
+
     }
-     
-     public void makeTransaction() throws InterruptedException, IOException {
+
+    public void makeTransaction() throws InterruptedException, IOException {
         changes = new ArrayList<int[]>();
         Scanner transaction = new Scanner(System.in);
+        ProductCatalog catalog = ProductCatalog.getInstance();
         while (nextItem) {
             try {
-                System.out.print("Enter item ID"); //temp
+                System.out.print("Enter item ID");
                 System.out.print("[OPTIONS: -999 for end of sale, -1 to remove an item, -190 to cancel transaction]\n-->");
-                if (transaction.hasNextInt()) { //check input type
-                    input = transaction.nextInt(); //get option or itemNumber
-                    if (input == endOfCart) { //input is -999
+                if (transaction.hasNextInt()) {
+                    input = transaction.nextInt();
+                    if (input == endOfCart) {
                         nextItem = false;
-                    } else if (input == removeItem) { //input is -1
+                    } else if (input == removeItem) {
                         if (currentCart.inventory.isEmpty()) {
                             System.out.println("NO ITEMS TO BE REMOVED");
                             continue;
                         }
                         System.out.print("Enter an item to remove\n-->");
-                        if (!transaction.hasNextInt()){throw new InputMismatchException();}
-                        currentCart.removeItem(transaction.nextInt()); //read in another value to remove that item
-                    } else if (input == cancelTransaction) { //input is -190
+                        if (!transaction.hasNextInt()) {
+                            throw new InputMismatchException();
+                        }
+                        currentCart.removeItem(transaction.nextInt());
+                    } else if (input == cancelTransaction) {
                         cancelTransaction(changes);
                         Cashier.cashierDo();
                         break;
-                    }
-                     else { //input is none of the options, thus possibly a valid itemNumber to add an item to cart
-                        //based on input, return Item from database called item
-                        System.out.print("Enter quantity of item to be purchased\n-->"); //prompt user to enter quantity of items to buy
-                        if (!transaction.hasNextInt()){throw new InputMismatchException();}
+                    } else {
+                        System.out.print("Enter quantity of item to be purchased\n-->");
+                        if (!transaction.hasNextInt()) {
+                            throw new InputMismatchException();
+                        }
                         int itemQuan = transaction.nextInt();
-                        if (itemQuan < 1){throw new InputMismatchException();}
+                        if (itemQuan < 1) {
+                            throw new InputMismatchException();
+                        } else {
+                            if(catalog.getProductById(input).getId()==input){
+                                currentCart.addMultItems(catalog.getProductById(input), itemQuan);                                
+                            }
+                        }
                     }
                 } else {
                     System.out.println("INVALID INPUT...Try Again");
                     System.out.println();
-                    transaction.nextLine();                
+                    transaction.nextLine();
                 }
-            } catch (NumberFormatException| InputMismatchException e) {
+            } catch (NumberFormatException | InputMismatchException e) {
                 System.out.println("Error reading input, try again");
                 System.out.println();
                 transaction.nextLine();
@@ -86,20 +96,19 @@ public class Sale extends Register{
 
         if (registerPay(pt)) {
             boolean paid = false;
-            while(!paid){
+            while (!paid) {
                 if (pt == 0) { // pt=0 plata cash, pt=1 plata card
                     Scanner cashIn = new Scanner(System.in);
-                    System.out.printf("Cart Total: %.2f\n", (this.currentCart.getSubTotal()*1.06));
+                    System.out.printf("Cart Total: %.2f\n", (this.currentCart.getSubTotal() * 1.06));
                     System.out.print("Enter cash recieved or enter -999 to pay by card\n-->");
                     double c = 0.0;
                     if (cashIn.hasNextDouble()) {
                         c = cashIn.nextDouble();
-                        if (c == -999){
-                             pt = 1;
-                             System.out.println("\nPaying By Card...");
-                             continue;
-                        }
-                        else if(c <=0){
+                        if (c == -999) {
+                            pt = 1;
+                            System.out.println("\nPaying By Card...");
+                            continue;
+                        } else if (c <= 0) {
                             System.out.println("Please Enter a valid amount...\n");
                             continue;
                         }
@@ -113,61 +122,55 @@ public class Sale extends Register{
                     }
                     System.out.println("Please Enter a valid amount...\n");
                     continue;
-                } 
-                else if (pt == 1) 
-                {
+                } else if (pt == 1) {
                     // plata cu cardul de implementat
                 }
-        }
-        }
-    }
-      public void cancelTransaction(ArrayList<int[]> changes) throws InterruptedException, IOException {
-
-            /*this should set all elements of ArrayList items to null and set size to 0*/
-            System.out.println("Transaction was cancelled...CART IS NOW EMPTY!");
-            currentCart.inventory.clear();
-            currentCart.clearSubTotal();
-
-            int id;
-            int quantity;
-
-            for (int[] pair : changes) {
-
-                id = pair[0];
-                quantity = pair[1];
-
-                //SQLInterface.getInstance().updateQuantity(id, quantity);
             }
+        }
     }
-      
-      public double makeChange(double cash, double total) {
+
+    public void cancelTransaction(ArrayList<int[]> changes) throws InterruptedException, IOException {
+
+        /*this should set all elements of ArrayList items to null and set size to 0*/
+        System.out.println("Transaction was cancelled...CART IS NOW EMPTY!");
+        currentCart.inventory.clear();
+        currentCart.clearSubTotal();
+
+        int id;
+        int quantity;
+
+        for (int[] pair : changes) {
+
+            id = pair[0];
+            quantity = pair[1];
+
+            //SQLInterface.getInstance().updateQuantity(id, quantity);
+        }
+    }
+
+    public double makeChange(double cash, double total) {
         double ret = 0.0;
         Scanner cashIn = new Scanner(System.in);
         if (cash >= total) {
             ret = cash - total;
-           
-        } else if (cash < total) 
-        {
-            System.out.printf("Insufficient Funds!\nRemaining Amount Due: $%.2f\n", (total-cash));
+
+        } else if (cash < total) {
+            System.out.printf("Insufficient Funds!\nRemaining Amount Due: $%.2f\n", (total - cash));
             double c = 0.0;
-            while (true){
+            while (true) {
                 System.out.print("Enter more money to complete the sale:\n-->");
-                if (cashIn.hasNextDouble()) 
-                {
+                if (cashIn.hasNextDouble()) {
                     c = cashIn.nextDouble();
-                    if (c > 0.0){
+                    if (c > 0.0) {
                         break;
-                    }
-                    else{
+                    } else {
                         System.out.println("Please enter a valid sum of money...\n");
                     }
-                }
-                else{
+                } else {
                     System.out.println("Please enter a valid sum of money...\n");
                     cashIn.nextLine();
                 }
             }
-
 
             cash = cash + c;
             ret = makeChange(cash, total);

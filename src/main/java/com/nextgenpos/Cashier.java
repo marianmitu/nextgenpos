@@ -12,6 +12,7 @@ package com.nextgenpos;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.InputMismatchException;
+
 public class Cashier {
 
     private String uName;
@@ -43,6 +44,7 @@ public class Cashier {
      */
     public static void cashierDo() throws InterruptedException, IOException {
         Scanner cashierScan = new Scanner(System.in);
+
         boolean done = false;
         do {
             System.out.print("Please select an option-->");
@@ -67,7 +69,7 @@ public class Cashier {
                         System.out.println("Invalid input, please try again!");
                         break;
                 }
-            } catch (NumberFormatException|InputMismatchException e) {
+            } catch (NumberFormatException | InputMismatchException e) {
                 System.out.println("Error reading input, please try again!");
                 System.out.println();
                 cashierScan.nextLine();
