@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nextgenpos;
 
 import java.io.IOException;
@@ -48,9 +44,9 @@ public class Register {
     }
 
     public static void main(String args[]) throws InterruptedException, IOException {
-        //Login l = Login.getInstance();
         Register reg = new Register();
         boolean done = false;
+        //creeam un catalog local si adaugam cateva date pentru test
         ProductCatalog catalog = ProductCatalog.getInstance();
         Product product1 = new Product(10.99, 1, "Kiwi", 30);
         catalog.addProductToCatalog(product1);
@@ -59,12 +55,9 @@ public class Register {
             System.out.println("************************************");
             System.out.println("************ Main Menu *************");
             System.out.println("************************************");
-            int rout = -1; // -1 for cashier, 0 for manager
-            if (rout == -1) {
-                Cashier.cashierDo();
-            }
+            Cashier.cashierDo();
         } while (!done);
-        
+
         //loop
     }
 }

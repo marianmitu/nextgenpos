@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nextgenpos;
 
 /**
@@ -28,20 +24,10 @@ public class Cashier {
         this.pw = p;
     }
 
-    /**
-     *
-     * @return username
-     */
     public String getUserName() {
         return this.uName;
     }
 
-    /**
-     * runs cashier routine, until user terminates
-     *
-     * @throws java.lang.InterruptedException
-     * @throws java.io.IOException
-     */
     public static void cashierDo() throws InterruptedException, IOException {
         Scanner cashierScan = new Scanner(System.in);
 
@@ -56,12 +42,9 @@ public class Cashier {
                         trans.makeTransaction();
                         break;
                     case 1:
-                        //Return ret = new Return();  // de creat clasa Return 
-                        //ret.makeReturn();
                         System.out.println("Not supported yet!");
                         break;
                     case -1:
-                        //logout
                         System.out.println("Logging Out!");
                         done = true;
                         break;

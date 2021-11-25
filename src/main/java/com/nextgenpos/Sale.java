@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nextgenpos;
 
 import java.io.IOException;
@@ -17,14 +13,13 @@ import java.util.Scanner;
 public class Sale extends Register {
 
     private double total;
-    private double tax;
     private boolean nextItem;
     private final int endOfCart;
     private final int removeItem;
     private int input;
     private final int cancelTransaction;
     private static final Double taxPercent = .19;
-    private ArrayList<int[]> changes; //list of changes made in the program, used to undo changes
+    private ArrayList<int[]> changes;
     Cart currentCart = new Cart();
 
     public Sale() {
@@ -33,8 +28,6 @@ public class Sale extends Register {
         this.removeItem = -1;
         this.cancelTransaction = -190;
         this.input = 0;
-        /*stores itemNum of currentCart.items.get(index).getItemNumber*/
-
     }
 
     public void makeTransaction() throws InterruptedException, IOException {
@@ -99,7 +92,7 @@ public class Sale extends Register {
             while (!paid) {
                 if (pt == 0) { // pt=0 plata cash, pt=1 plata card
                     Scanner cashIn = new Scanner(System.in);
-                    System.out.printf("Cart Total: %.2f\n", (this.currentCart.getSubTotal() * 1.06));
+                    System.out.printf("Cart Total: %.2f\n", (this.currentCart.getSubTotal()));
                     System.out.print("Enter cash recieved or enter -999 to pay by card\n-->");
                     double c = 0.0;
                     if (cashIn.hasNextDouble()) {
@@ -112,10 +105,8 @@ public class Sale extends Register {
                             System.out.println("Please Enter a valid amount...\n");
                             continue;
                         }
-                        double change = makeChange(c, currentCart.getSubTotal() + tax); // update la subtotal de plata
-                        Receipt receipt = new Receipt(currentCart, tax, pt);
-                        receipt.store();
-                        receipt.print();
+                        double change = makeChange(c, currentCart.getSubTotal()); // update la subtotal de plata
+                        //Aici trebuie implementat "bonul"
                         System.out.printf("Your change is %.2f.\n", change);
                         paid = true;
                         continue;
@@ -131,7 +122,6 @@ public class Sale extends Register {
 
     public void cancelTransaction(ArrayList<int[]> changes) throws InterruptedException, IOException {
 
-        /*this should set all elements of ArrayList items to null and set size to 0*/
         System.out.println("Transaction was cancelled...CART IS NOW EMPTY!");
         currentCart.inventory.clear();
         currentCart.clearSubTotal();
@@ -143,8 +133,6 @@ public class Sale extends Register {
 
             id = pair[0];
             quantity = pair[1];
-
-            //SQLInterface.getInstance().updateQuantity(id, quantity);
         }
     }
 
@@ -155,7 +143,7 @@ public class Sale extends Register {
             ret = cash - total;
 
         } else if (cash < total) {
-            System.out.printf("Insufficient Funds!\nRemaining Amount Due: $%.2f\n", (total - cash));
+            System.out.printf("Insufficient Funds!\nRemaining Amount Due: $"+ (total - cash)+ "\n");
             double c = 0.0;
             while (true) {
                 System.out.print("Enter more money to complete the sale:\n-->");

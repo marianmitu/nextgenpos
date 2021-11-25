@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.nextgenpos;
 
 import java.io.IOException;
@@ -19,27 +14,21 @@ public class Cart {
 
     private double subTotal;
     private double cashIn;
-    private int currentDay;
 
     public Cart() {
         this.subTotal = 0.0;
         inventory = new ArrayList<>();
-        this.setCurrentDay();
     }
 
     public void add(Product item) {
         inventory.add(item);
         this.subTotal += item.getPrice();
     }
-    
+
     public void addMultItems(Product item, int q) {
         for (int i = 0; i < q; i++) {
             this.add(item);
         }
-    }
-
-    public Integer getStartDate() {
-        return this.currentDay;
     }
 
     public ArrayList getInventory() {
@@ -69,11 +58,6 @@ public class Cart {
 
     public void clearSubTotal() {
         this.subTotal = 0;
-    }
-
-    // data necesara in cazul unui retur 
-    public void setCurrentDay() {
-        this.currentDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
     }
 
 }
