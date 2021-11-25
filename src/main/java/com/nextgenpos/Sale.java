@@ -1,4 +1,3 @@
-
 package com.nextgenpos;
 
 import java.io.IOException;
@@ -18,7 +17,6 @@ public class Sale extends Register {
     private final int removeItem;
     private int input;
     private final int cancelTransaction;
-    private static final Double taxPercent = .19;
     private ArrayList<int[]> changes;
     Cart currentCart = new Cart();
 
@@ -65,8 +63,8 @@ public class Sale extends Register {
                         if (itemQuan < 1) {
                             throw new InputMismatchException();
                         } else {
-                            if(catalog.getProductById(input).getId()==input){
-                                currentCart.addMultItems(catalog.getProductById(input), itemQuan);                                
+                            if (catalog.getProductById(input).getId() == input) {
+                                currentCart.addMultItems(catalog.getProductById(input), itemQuan);
                             }
                         }
                     }
@@ -115,6 +113,7 @@ public class Sale extends Register {
                     continue;
                 } else if (pt == 1) {
                     // plata cu cardul de implementat
+                    System.out.println("\nNot supported yet...");
                 }
             }
         }
@@ -143,7 +142,7 @@ public class Sale extends Register {
             ret = cash - total;
 
         } else if (cash < total) {
-            System.out.printf("Insufficient Funds!\nRemaining Amount Due: $"+ (total - cash)+ "\n");
+            System.out.printf("Insufficient Funds!\nRemaining Amount Due: $" + (total - cash) + "\n");
             double c = 0.0;
             while (true) {
                 System.out.print("Enter more money to complete the sale:\n-->");
